@@ -16,12 +16,12 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v4
         with:
           submodules: 'recursive'
 
       - name: Cache Dependencies
-        uses: actions/cache@main
+        uses: actions/cache@v4
         with:
           path: /Users/runner/Library/Caches/Homebrew
           key: ${{ runner.os }}-deps-cache
@@ -33,14 +33,15 @@ jobs:
 
       - name: Build
         run: |
-          mkdir build -p "$GITHUB_WORKSPACE/build"
-          cd "$GITHUB_WORKSPACE/build"
+          rm -rf build
+          mkdir -p build
+          cd build
           cmake \
            -DCMAKE_C_COMPILER=/usr/bin/clang \
            -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
            -DCMAKE_BUILD_TYPE=Release \
            -DLauncher_NOTIFICATION_URL:STRING=https://files.multimc.org/notifications.json \
-           -DCMAKE_INSTALL_PREFIX:PATH="$GITHUB_WORKSPACE/build/dist" \
+           -DCMAKE_INSTALL_PREFIX:PATH="${GITHUB_WORKSPACE}/build/dist" \
            -DCMAKE_PREFIX_PATH="$(brew --prefix qt@5)/lib/cmake" \
            -DQt5_DIR="$(brew --prefix qt@5)" \
            -DLauncher_UPDATER_BASE=https://files.multimc.org/update/ \
@@ -51,24 +52,24 @@ jobs:
            -DLauncher_BUG_TRACKER_URL=https://github.com/UltimMC/Launcher/issues \
            -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 \
            -DLauncher_EMBED_SECRETS=On \
-           "$GITHUB_WORKSPACE"
+           "${GITHUB_WORKSPACE}"
 
       - name: Compile
         run: |
-          cd "$GITHUB_WORKSPACE/build"
+          cd "${GITHUB_WORKSPACE}/build"
           make -j$(sysctl -n hw.logicalcpu)
 
       - name: Test
         run: |
-          cd "$GITHUB_WORKSPACE/build"
+          cd "${GITHUB_WORKSPACE}/build"
           make test
-          cmake -E remove_directory "$GITHUB_WORKSPACE/build/dist"
+          cmake -E remove_directory "${GITHUB_WORKSPACE}/build/dist"
 
       - name: Install
         run: |
-          cd "$GITHUB_WORKSPACE/build"
+          cd "${GITHUB_WORKSPACE}/build"
           make install
-          chmod +x "$GITHUB_WORKSPACE/build/dist/UltimMC.app/Contents/MacOS/UltimMC"
+          chmod +x "${GITHUB_WORKSPACE}/build/dist/UltimMC.app/Contents/MacOS/UltimMC"
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
