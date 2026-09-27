@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5)
 
 if(WIN32)
     # In Qt 5.1+ we have our own main() function, don't autolink to qtmain on Windows
