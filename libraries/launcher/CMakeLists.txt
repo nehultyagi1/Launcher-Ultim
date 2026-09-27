@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.5)
 project(launcher Java)
-find_package(Java 1.8 REQUIRED COMPONENTS Development)
+find_package(Java 11 REQUIRED COMPONENTS Development)
 
 include(UseJava)
 set(CMAKE_JAVA_JAR_ENTRY_POINT org.multimc.EntryPoint)
-set(CMAKE_JAVA_COMPILE_FLAGS -target 8 -source 8 -Xlint:deprecation -Xlint:unchecked)
+set(CMAKE_JAVA_COMPILE_FLAGS -target 11 -source 11 -Xlint:deprecation -Xlint:unchecked)
 
 set(SRC
     org/multimc/EntryPoint.java
